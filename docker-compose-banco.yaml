@@ -1,0 +1,31 @@
+version: "3.5"
+#IMPORTANTE: Você terá 1.5 CPUs e 3.0GB
+services:
+
+  db:
+    image: postgres:15.4
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: quarkus
+      POSTGRES_PASSWORD: quarkus
+      POSTGRES_DB: quarkus
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: '1.5GB'
+  cache:
+    image: quay.io/infinispan/server-native:14.0.13.Final-1
+    ports:
+      - "11222:11222"
+    environment:
+      USER: quarkus
+      PASS: quarkus
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '0.5GB'

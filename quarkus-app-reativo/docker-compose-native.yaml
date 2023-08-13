@@ -1,0 +1,94 @@
+version: "3.6"
+#IMPORTANTE: Você terá 1.5 CPUs e 3.0GB
+services:
+  cache:
+    image: quay.io/infinispan/server:14.0.14.Final
+    ports:
+      - "11222:11222"
+    environment:
+      USER: quarkus
+      PASS: quarkus
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: '0.5GB'
+  api1:
+    image: quarkus/quarkus-app-reativo-native
+    environment:
+      DB_HOST: db
+      QUARKUS_LOG_CONSOLE_ENABLE: true
+      QUARKUS_LOG_FILE_ENABLE: false
+      QUARKUS_DATASOURCE_REACTIVE_MAX_SIZE: 30
+      QUARKUS_VERTX_EVENT_LOOPS_POOL_SIZE: 30
+      QUARKUS_VERTX_WORKER_POOL_SIZE: 5
+      QUARKUS_DATASOURCE_REACTIVE_CACHE_PREPARED_STATEMENTS: true
+    depends_on:
+      - db
+      - cache
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: '0.5GB'
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
+
+  api2:
+    image: quarkus/quarkus-app-reativo-native
+    environment:
+      DB_HOST: db
+      QUARKUS_LOG_CONSOLE_ENABLE: true
+      QUARKUS_LOG_FILE_ENABLE: false
+      QUARKUS_DATASOURCE_REACTIVE_MAX_SIZE: 30
+      QUARKUS_VERTX_EVENT_LOOPS_POOL_SIZE: 30
+      QUARKUS_VERTX_WORKER_POOL_SIZE: 5
+      QUARKUS_DATASOURCE_REACTIVE_CACHE_PREPARED_STATEMENTS: true
+    depends_on:
+      - db
+      - cache
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: '0.5GB'
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
+
+  nginx:
+    image: nginx:1.25.1
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api1
+      - api2
+    ports:
+      - "9999:9999"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: '0.2GB'
+
+  db:
+    image: postgres:15.4
+    command: postgres -c 'max_connections=100' -c 'shared_buffers=512MB' -c 'fsync=off' -c 'max_prepared_transactions=100' -c 'effective_cache_size=512MB' -c 'synchronous_commit=off' -c 'checkpoint_timeout=1d' -c 'max_wal_size=1GB'
+    volumes:
+      - ../db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: quarkus
+      POSTGRES_PASSWORD: quarkus
+      POSTGRES_DB: quarkus
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: '2.0GB'

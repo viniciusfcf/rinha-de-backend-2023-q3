@@ -13,7 +13,7 @@ public class Pessoa {
 
     public Pessoa() {}
 
-    public Pessoa(UUID publicID,String apelido,String nome, LocalDate nascimento, String stack) {
+    public Pessoa(UUID publicID, String apelido, String nome, LocalDate nascimento, String stack) {
         this.publicID = publicID;
         this.apelido = apelido;
         this.nome = nome;
@@ -24,7 +24,7 @@ public class Pessoa {
     }
 
     @JsonProperty(value = "id")
-    public UUID publicID = UUID.randomUUID();
+    public UUID publicID;
 
     @NotEmpty
     @Size(max = 32)
