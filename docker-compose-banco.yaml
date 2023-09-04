@@ -1,11 +1,31 @@
 version: "3.5"
 #IMPORTANTE: Você terá 1.5 CPUs e 3.0GB
 services:
+  # mq:
+  #   image: rabbitmq:3.12.4-management
+  #   volumes:
+  #     - ./rabbit.json:/etc/docker/daemon.json
+    
+  #   ports:
+  #     - "8080:8080"
+  #     - "15672:15672"
+  #     - "5672:5672"
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: quarkus
+  #     RABBITMQ_DEFAULT_PASS: quarkus
+  #     POSTGRES_DB: quarkus
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '1.0'
+  #         memory: '1.5GB'
+    
 
   db:
     image: postgres:15.4
     volumes:
-      - ./db:/docker-entrypoint-initdb.d
+      - ./db/create-db-revanche.sql:/docker-entrypoint-initdb.d/create-db-revanche.sql
+      - /tmp/my-postgresql:/var/lib/postgresql
     ports:
       - "5432:5432"
     environment:
@@ -17,15 +37,18 @@ services:
         limits:
           cpus: '1.0'
           memory: '1.5GB'
-  cache:
-    image: quay.io/infinispan/server-native:14.0.13.Final-1
-    ports:
-      - "11222:11222"
-    environment:
-      USER: quarkus
-      PASS: quarkus
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '0.5GB'
+          #https://www.postgresql.org/docs/current/non-durability.html
+    command: postgres -c 'max_connections=200' -c 'shared_buffers=512MB' -c 'fsync=off' -c 'max_prepared_transactions=80' -c 'effective_cache_size=512MB' -c 'synchronous_commit=off' -c 'checkpoint_timeout=1d' -c 'max_wal_size=1GB' -c 'full_page_writes=false'
+    
+  # cache:
+  #   image: quay.io/infinispan/server-native:14.0.13.Final-1
+  #   ports:
+  #     - "11222:11222"
+  #   environment:
+  #     USER: quarkus
+  #     PASS: quarkus
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.5'
+  #         memory: '0.5GB'
