@@ -8,7 +8,7 @@ CREATE SEQUENCE serial START 1 CACHE 5000;
 
 create table Pessoa (
     internalid integer not null,
-    apelido varchar(32) not null ,
+    apelido varchar(32) not null UNIQUE,
     nascimento date not null,
     nome varchar(100) not null,
     publicID uuid not null,
