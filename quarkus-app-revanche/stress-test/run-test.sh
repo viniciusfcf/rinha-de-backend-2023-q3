@@ -8,7 +8,7 @@
 
 #sh $GATLING_BIN_DIR/gatling.sh -ro ~/des/rinha-de-backend-2023-q3-public/stress-test/user-files/results/rinhabackendsimulation-20230813020445855
 
-GATLING_HOME=./gatling-3.9.5
+GATLING_BIN_DIR=gatling-3.9.5/bin
 
 WORKSPACE=~/des/rinha-de-backend-2023-q3-public/stress-test
 

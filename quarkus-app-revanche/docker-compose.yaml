@@ -62,7 +62,7 @@ services:
 
   db:
     image: postgres:15.4
-    command: postgres -c 'max_connections=100' -c 'shared_buffers=512MB' -c 'fsync=off' -c 'effective_cache_size=512MB' -c 'synchronous_commit=off' -c 'checkpoint_timeout=1d' -c 'max_wal_size=1GB' -c 'full_page_writes=false'
+    command: postgres -c 'max_connections=120' -c 'shared_buffers=512MB' -c 'fsync=off' -c 'effective_cache_size=512MB' -c 'synchronous_commit=off' -c 'checkpoint_timeout=1d' -c 'max_wal_size=1GB' -c 'full_page_writes=false'
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - /tmp/my-postgresql-jvm:/var/lib/postgresql
