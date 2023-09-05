@@ -2,7 +2,7 @@ version: "3.6"
 #IMPORTANTE: Você terá 1.5 CPUs e 3.0GB
 services:
   api1:
-    image: quarkus/quarkus-app-revanche-native
+    image: quay.io/vflorent/quarkus-app-revanche-native
     environment:
       DB_HOST: db
       QUARKUS_LOG_CONSOLE_ENABLE: false
@@ -23,7 +23,7 @@ services:
         hard: 1000000
 
   api2:
-    image: quarkus/quarkus-app-revanche-native
+    image: quay.io/vflorent/quarkus-app-revanche-native
     environment:
       DB_HOST: db
       QUARKUS_LOG_CONSOLE_ENABLE: false

@@ -5,10 +5,6 @@
 - mvn
 - docker
 
-# Build
-
-```quarkus-app-revanche/build-nativo.sh```
-
 # Init Containers
 
 ```quarkus-app-revanche/docker compose up```
@@ -18,6 +14,12 @@
 ```
 stress-test/run-test.sh
 ```
+
+
+# Build
+
+```quarkus-app-revanche/build-nativo.sh```
+
 
 # Run Dev Local
 Init database
