@@ -5,8 +5,8 @@ CREATE TEXT SEARCH CONFIGURATION BUSCA (COPY = portuguese);
 ALTER TEXT SEARCH CONFIGURATION BUSCA ALTER MAPPING FOR hword, hword_part, word WITH portuguese_stem;
 -- https://www.postgresql.org/docs/current/non-durability.html
 create UNLOGGED table Pessoa (
-    apelido varchar(32) not null,
-    nascimento date not null UNIQUE,
+    apelido varchar(32) not null UNIQUE,
+    nascimento date not null,
     nome varchar(100) not null,
     publicID uuid not null,
     stack VARCHAR(800),
