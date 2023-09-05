@@ -1,2 +1,2 @@
 ./mvnw clean package -DskipTests -Dnative -Dquarkus.native.container-build=true -Dquarkus.container-image.build=true
-docker build -f src/main/docker/Dockerfile.native-micro -t quarkus/quarkus-app-revanche-native .
+docker build -f src/main/docker/Dockerfile.native-micro -t quay.io/vflorent/quarkus-app-revanche-native .
