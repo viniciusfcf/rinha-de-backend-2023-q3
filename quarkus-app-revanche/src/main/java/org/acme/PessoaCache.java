@@ -8,19 +8,14 @@ public class PessoaCache {
 
     public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    // @ProtoField(number = 1, required = true)
     public String id;
 
-    // @ProtoField(number = 2, required = true)
     public String apelido;
 
-    // @ProtoField(number = 3, required = true)
     public String nome;
 
-    // @ProtoField(number = 4, required = true)
     public String nascimento;
 
-    // @ProtoField(number = 5)
     public String[] stack;
 
     public static PessoaCache of(Pessoa p) {

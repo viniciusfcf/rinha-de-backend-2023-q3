@@ -23,21 +23,10 @@ import jakarta.ws.rs.Produces;
 @ApplicationScoped
 public class ConfigJaxrs {
 
-    // @ServerExceptionMapper
-    // public RestResponse<String> mapException(ConstraintViolationException constraint) {
-    //     return RestResponse.status(422);
-    // }
-
     @ServerExceptionMapper
     public RestResponse<String> mapException(org.hibernate.exception.ConstraintViolationException constraint) {
         return RestResponse.status(422);
     }
-    
-
-    // @ServerExceptionMapper
-    // public RestResponse<String> mapException(PSQLException constraint) {
-    //     return RestResponse.status(422);
-    // }
 
     @ServerExceptionMapper
     public RestResponse<String> mapInvalidDefinitionException(com.fasterxml.jackson.databind.exc.InvalidDefinitionException constraint) {

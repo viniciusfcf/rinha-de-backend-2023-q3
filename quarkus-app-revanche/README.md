@@ -1,5 +1,25 @@
 # quarkus-app-revanche
 
+
+# Pre req
+- mvn
+- docker
+
+# Build
+
+```quarkus-app-revanche/build-nativo.sh```
+
+# Init Containers
+
+```quarkus-app-revanche/docker compose up```
+
+# Run Test
+
+```
+stress-test/run-test.sh
+```
+
+# Run Dev Local
 Init database
 ```
 docker compose -f ../docker-compose-banco.yaml up
