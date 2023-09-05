@@ -52,14 +52,16 @@ public class PessoaResource {
             PessoaResource.pessoasPorID.put(ip.id, pessoaCache);
         }
         Pessoa pessoa = Pessoa.of(ip.id, ip.apelido, ip.nome, ip.nascimento, ip.stack==null?null:Arrays.toString(ip.stack));
-        Uni<Pessoa> pesquisa = Pessoa.find("apelido = ?1", "a").firstResult();
-        return pesquisa.onItem().transformToUni(a -> {
-            if(a == null) {
-                return pessoa.persist().replaceWith(Response.created(URI.create("/pessoas/" + ip.id)).build());
-            }else {
-                throw new WebApplicationException(RESPONSE_422);
-            }
-        }).onFailure().transform(e -> new WebApplicationException(RESPONSE_422));
+        //TODO tentei
+        // Uni<Pessoa> pesquisa = Pessoa.find("apelido = ?1", "a").firstResult();
+        // return pesquisa.onItem().transformToUni(a -> {
+        //     if(a == null) {
+        //         return pessoa.persist().replaceWith(Response.created(URI.create("/pessoas/" + ip.id)).build());
+        //     }else {
+        //         throw new WebApplicationException(RESPONSE_422);
+        //     }
+        // }).onFailure().transform(e -> new WebApplicationException(RESPONSE_422));
+        return pessoa.persist().replaceWith(Response.created(URI.create("/pessoas/" + ip.id)).build());
     }
 
     private void validePessoa(InserirPessoa ip) {
