@@ -9,11 +9,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
+@Cacheable
 @RegisterForReflection
 public class Pessoa extends PanacheEntityBase {
 

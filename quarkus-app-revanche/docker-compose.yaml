@@ -2,66 +2,46 @@ version: "3.6"
 #IMPORTANTE: Você terá 1.5 CPUs e 3.0GB
 services:
   api1:
-    image: quarkus/quarkus-app-revanche-jvm
+    image: quarkus/quarkus-app-revanche-native
     environment:
       DB_HOST: db
-      QUARKUS_LOG_CONSOLE_ENABLE: true
+      QUARKUS_LOG_CONSOLE_ENABLE: false
       QUARKUS_LOG_FILE_ENABLE: false
       QUARKUS_DATASOURCE_REACTIVE_MAX_SIZE: 50
-      # QUARKUS_DATASOURCE_JDBC_REACTIVE_EVENT_LOOP_SIZE: 30
-      # QUARKUS_DATASOURCE_REACTIVE_EVENT_LOOP_SIZE: 30
-      # QUARKUS_HTTP_IO_THREADS: 100
-      # QUARKUS_VERTX_EVENT_LOOPS_POOL_SIZE: 30
     depends_on:
       db:
         condition: service_healthy
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: '0.35'
           memory: '0.5GB'
     ulimits:
       nproc: 65535
       nofile:
         soft: 1000000
         hard: 1000000
-    healthcheck:
-      test: curl -o /dev/null -s --retry 0 --head http://localhost:9999/ || exit 1
-      interval: 10s
-      retries: 60
-      start_period: 20s
-      timeout: 5s
 
   api2:
-    image: quarkus/quarkus-app-revanche-jvm
+    image: quarkus/quarkus-app-revanche-native
     environment:
       DB_HOST: db
-      QUARKUS_LOG_CONSOLE_ENABLE: true
+      QUARKUS_LOG_CONSOLE_ENABLE: false
       QUARKUS_LOG_FILE_ENABLE: false
       QUARKUS_DATASOURCE_REACTIVE_MAX_SIZE: 50
-      # QUARKUS_DATASOURCE_JDBC_REACTIVE_EVENT_LOOP_SIZE: 30
-      # QUARKUS_DATASOURCE_REACTIVE_EVENT_LOOP_SIZE: 30
-      # QUARKUS_HTTP_IO_THREADS: 100
-      # QUARKUS_VERTX_EVENT_LOOPS_POOL_SIZE: 30
     depends_on:
       db:
         condition: service_healthy
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: '0.35'
           memory: '0.5GB'
     ulimits:
       nproc: 65535
       nofile:
         soft: 1000000
         hard: 1000000
-    healthcheck:
-      test: curl -o /dev/null -s --retry 0 --head http://localhost:9999/ || exit 1
-      interval: 10s
-      retries: 60
-      start_period: 20s
-      timeout: 5s
 
   nginx:
     image: nginx:1.25.1
@@ -69,9 +49,9 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       api1:
-        condition: service_healthy
+        condition: service_started
       api2:
-        condition: service_healthy
+        condition: service_started
     ports:
       - "9999:9999"
     deploy:
@@ -82,7 +62,7 @@ services:
 
   db:
     image: postgres:15.4
-    command: postgres -c 'max_connections=400' -c 'shared_buffers=512MB' -c 'fsync=off' -c 'max_prepared_transactions=80' -c 'effective_cache_size=512MB' -c 'synchronous_commit=off' -c 'checkpoint_timeout=1d' -c 'max_wal_size=1GB' -c 'full_page_writes=false'
+    command: postgres -c 'max_connections=100' -c 'shared_buffers=512MB' -c 'fsync=off' -c 'effective_cache_size=512MB' -c 'synchronous_commit=off' -c 'checkpoint_timeout=1d' -c 'max_wal_size=1GB' -c 'full_page_writes=false'
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - /tmp/my-postgresql-jvm:/var/lib/postgresql
@@ -95,7 +75,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: '0.6'
           memory: '1.5GB'
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
