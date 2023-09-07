@@ -8,12 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import io.quarkus.hibernate.reactive.panache.common.WithSession;
-import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
+import io.quarkus.hibernate.reactive.panache.Panache;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -33,13 +31,12 @@ public class PessoaResource {
     private static final Response RESPONSE_400 = Response.status(Response.Status.BAD_REQUEST).build();
     private static final Response RESPONSE_422 = Response.status(422).build();
 
-    static Map<String, PessoaCache> pessoasPorApelido = new HashMap<>(60_000);
-    static Map<UUID, PessoaCache> pessoasPorID = new HashMap<>(60_000);
+    static Map<String, PessoaCache> pessoasPorApelido = new HashMap<>(100_000);
+    static Map<UUID, PessoaCache> pessoasPorID = new HashMap<>(100_000);
 
 
     @POST
     @Path("pessoas")
-    @WithTransaction
     public Uni<Response> post(
             InserirPessoa ip) throws JsonMappingException, JsonProcessingException, SQLException {
         
@@ -52,7 +49,6 @@ public class PessoaResource {
             PessoaResource.pessoasPorID.put(ip.id, pessoaCache);
         }
         Pessoa pessoa = Pessoa.of(ip.id, ip.apelido, ip.nome, ip.nascimento, ip.stack==null?null:Arrays.toString(ip.stack));
-        //TODO tentei
         // Uni<Pessoa> pesquisa = Pessoa.find("apelido = ?1", "a").firstResult();
         // return pesquisa.onItem().transformToUni(a -> {
         //     if(a == null) {
@@ -61,7 +57,8 @@ public class PessoaResource {
         //         throw new WebApplicationException(RESPONSE_422);
         //     }
         // }).onFailure().transform(e -> new WebApplicationException(RESPONSE_422));
-        return pessoa.persist().replaceWith(Response.created(URI.create("/pessoas/" + ip.id)).build());
+        return Panache.withTransaction(() ->
+            pessoa.persist()).replaceWith(Response.created(URI.create("/pessoas/" + ip.id)).build());
     }
 
     private void validePessoa(InserirPessoa ip) {
@@ -88,12 +85,12 @@ public class PessoaResource {
 
     @GET
     @Path("pessoas")
-    @WithSession
     public Uni<List<Pessoa>> getAll(@QueryParam("t") String termo) throws SQLException {
         if (termo == null || "".equals(termo)) {
             throw new WebApplicationException(RESPONSE_400);
         }
-        Uni<List<Pessoa>> r = Pessoa.find("busca like '%' || ?1 || '%'", termo).page(0, 50).list();
+        Uni<List<Pessoa>> r = Panache.withSession(() ->
+            Pessoa.find("busca like '%' || ?1 || '%'", termo).page(0, 50).list());
         return r;
     }
 
@@ -106,7 +103,6 @@ public class PessoaResource {
 
     @GET
     @Path("contagem-pessoas")
-    @WithTransaction
     public Uni<Long> count() throws SQLException {
         return Pessoa.count();
     }

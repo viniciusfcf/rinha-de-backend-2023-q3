@@ -35,10 +35,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1.0'
-          memory: '1.5GB'
+          cpus: '0.70'
+          memory: '2GB'
           #https://www.postgresql.org/docs/current/non-durability.html
-    command: postgres -c 'max_connections=200' -c 'shared_buffers=512MB' -c 'fsync=off' -c 'max_prepared_transactions=80' -c 'effective_cache_size=512MB' -c 'synchronous_commit=off' -c 'checkpoint_timeout=1d' -c 'max_wal_size=1GB' -c 'full_page_writes=false'
+    command: postgres -c 'max_connections=110' -c 'shared_buffers=512MB' -c 'fsync=off' -c 'max_prepared_transactions=300' -c 'effective_cache_size=1024MB' -c 'synchronous_commit=off' -c 'checkpoint_timeout=1d' -c 'max_wal_size=1GB' -c 'full_page_writes=false' -c 'work_mem=256MB'
     
   # cache:
   #   image: quay.io/infinispan/server-native:14.0.13.Final-1
